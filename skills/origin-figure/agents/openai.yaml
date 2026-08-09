@@ -1,0 +1,4 @@
+interface:
+  display_name: "Origin Figure"
+  short_description: "Create and verify editable Origin figures"
+  default_prompt: "Use $origin-figure to build and verify an editable Origin figure from my Excel workbook and visual reference."
