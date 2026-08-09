@@ -21,10 +21,10 @@ Build publication-ready figures in Origin while keeping the source data, graph o
 3. Work on one figure at a time unless the user explicitly requests a batch.
 4. Keep source workbooks, SVGs, images, scripts, and existing OPJU files unchanged. Save outputs separately unless replacement is explicitly authorized.
 
-## Run the privacy-safe preflight
+## Run the portable read-only preflight
 
 1. Locate the exact inputs and intended output directory.
-2. Run `scripts/audit_origin_artifacts.py` with the relevant `--xlsx`, `--csv`, `--svg`, `--opju`, or `--reference` arguments. Its default output must remain privacy-safe: basenames, hashes, dimensions, counts, and geometry only.
+2. Run `scripts/audit_origin_artifacts.py` with the relevant `--xlsx`, `--csv`, `--svg`, `--opju`, or `--reference` arguments. Keep default output environment-neutral: basenames, hashes, dimensions, counts, and geometry only; enable machine- or dataset-specific detail when the task requires it.
 3. Use `--include-preview`, `--include-formulas`, or `--full-paths` only when those details are necessary and permitted to appear in tool output.
 4. Treat `openpyxl` as an optional XLSX/XLSM-audit dependency. If it is absent, report that limitation; do not install or alter an environment without approval. CSV, SVG, OPJU, and reference audits must remain usable without it.
 5. Inspect headers, units, missing cells, category order, and formula semantics. If formula cells lack cached values, trace the upstream raw data and plan explicit derived columns in Origin instead of importing blanks or formula text as numbers.

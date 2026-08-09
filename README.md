@@ -2,6 +2,8 @@
 
 A reusable Origin and OriginPro scientific-figure skill for Codex and compatible Agent Skills hosts.
 
+This repository contains the complete skill. The environment checks and configurable audit output are designed so the same workflow can run across computers with different Origin, MCP, Python, and filesystem configurations. The shared repository includes the whole workflow and omits no functionality.
+
 ## Included skill
 
 ### `origin-figure`
@@ -66,9 +68,9 @@ Or describe an Origin plotting task naturally. The skill supports three operatin
 - **Create:** build a new Origin worksheet, graph, OPJU, and SVG.
 - **Revise:** inspect an existing OPJU and save a separately verified revision unless replacement is authorized.
 
-## Privacy-safe artifact audit
+## Portable artifact audit
 
-The bundled script reports basenames, hashes, dimensions, counts, and SVG geometry by default:
+The bundled script reports a compact, environment-neutral summary by default: basenames, hashes, dimensions, counts, and SVG geometry.
 
 ```powershell
 python skills/origin-figure/scripts/audit_origin_artifacts.py `
@@ -76,11 +78,13 @@ python skills/origin-figure/scripts/audit_origin_artifacts.py `
   --svg path/to/reference.svg
 ```
 
-Potentially sensitive details are opt-in:
+Machine- and dataset-specific details remain fully available when needed:
 
 - `--include-preview` includes bounded workbook headers or CSV rows.
 - `--include-formulas` includes bounded formula text and coordinates.
 - `--full-paths` includes resolved absolute paths.
+
+These switches keep default logs portable across different computers; they do not remove any audit capability from the shared skill.
 
 The script imports `openpyxl` only when `--xlsx` is used. CSV, SVG, OPJU, and generic reference audits use the Python standard library.
 

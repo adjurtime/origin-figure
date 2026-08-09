@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Privacy-safe, read-only structural audit for Origin figure artifacts."""
+"""Portable, read-only structural audit for Origin figure artifacts."""
 
 from __future__ import annotations
 
@@ -357,7 +357,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Inspect workbook, CSV, OPJU, SVG, and reference artifacts without "
-            "modifying them. Output is privacy-safe by default."
+            "modifying them. Output is a compact summary by default."
         )
     )
     parser.add_argument(

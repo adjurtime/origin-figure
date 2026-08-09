@@ -2,9 +2,9 @@
 
 Apply every relevant check. A plausible preview or successful file-level audit is not sufficient.
 
-## Privacy and input integrity
+## Environment and input integrity
 
-- The audit used privacy-safe defaults unless full paths, previews, or formulas were necessary and permitted.
+- The audit used portable summary defaults unless full paths, previews, or formulas were necessary for the task.
 - Tool output contains no unintended user-profile path, token, private data value, formula, or workbook header.
 - Source hashes were recorded before mutation without changing the source files.
 - Original workbooks, SVGs, images, scripts, and OPJU files remain unchanged.
