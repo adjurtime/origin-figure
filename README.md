@@ -2,7 +2,6 @@
 
 A reusable Origin and OriginPro scientific-figure skill for Codex and compatible Agent Skills hosts.
 
-This repository contains the complete skill. The environment checks and configurable audit output are designed so the same workflow can run across computers with different Origin, MCP, Python, and filesystem configurations. The shared repository includes the whole workflow and omits no functionality.
 
 ## Included skill
 
