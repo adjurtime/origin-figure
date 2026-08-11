@@ -1,4 +1,4 @@
 interface:
   display_name: "Origin Figure"
-  short_description: "Create and verify editable Origin figures"
-  default_prompt: "Use $origin-figure to build and verify an editable Origin figure from my Excel workbook and visual reference."
+  short_description: "Create concise, editable paper figures in Origin"
+  default_prompt: "Use $origin-figure to create or revise an editable, Word-sized paper figure in Origin and export only when I request it."

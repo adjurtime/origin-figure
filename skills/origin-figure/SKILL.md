@@ -1,72 +1,44 @@
 ---
 name: origin-figure
-description: "Create, redraw, revise, audit, and export editable Origin or OriginPro scientific figures on Windows from XLSX, XLSM, CSV, OPJU, SVG, and image references. Use for Origin画图, Origin作图, 论文配图, 科研绘图, 图形重绘, publication figures, grouped or stacked columns, multi-panel scatter or line-symbol charts, source-data and formula preservation, OPJU/SVG delivery, or inspection of an existing Origin project. Require Origin-native data bindings and final Origin verification; do not use matplotlib or another renderer for the final figure."
+description: "Create, revise, audit, and save editable publication figures in Origin or OriginPro on Windows from tabular data, OPJU, SVG, and image references. Use for Origin画图, 论文配图, existing-OPJU revisions, Word-sized layouts, typography, labels, multi-panel figures, and requested vector or raster exports. Require Origin-native worksheet bindings and persistence verification; do not use another renderer for the final graph."
 ---
 
 # Origin Figure
 
-Build publication-ready figures in Origin while keeping the source data, graph objects, and saved project editable. Treat a rendered preview as visual evidence, not as the final artifact.
+Make paper-ready Origin figures with authoritative data, worksheet bindings, and editability. Work on one figure at a time.
 
-## Choose the operating mode
+## Use the publication defaults
 
-1. Use **audit mode** to inspect inputs, an existing OPJU, or exported graphics without modifying them.
-2. Use **create mode** to build a new worksheet, graph, OPJU, and SVG from authoritative source data.
-3. Use **revise mode** to inspect an existing OPJU and save revisions separately unless overwriting is explicitly authorized.
-4. Follow the current user request, project instructions, and approval policy before applying any mutation.
+- Treat tabular inputs as quantitative authority and images as visual references. Never invent or silently repair scientific values.
+- For English paper figures, default to Times New Roman at 10.5 pt at the final physical size. Set the Origin page to the intended Word insertion size so later scaling does not change the effective font size. Explicit user, journal, or project requirements override these defaults.
+- Reuse an accepted project style for typography, axes, palette, legends, panel labels, and spacing.
+- Save an editable `.opju` when the graph is ready for review. Do not export by default. After user feedback, export only the requested formats; prefer SVG for vector delivery and use 600 dpi PNG when raster output is requested.
+- Protect source files and existing OPJU files. Preserve manual Origin edits and save revisions separately unless replacement is authorized.
 
-## Establish authority and scope
+## Match the work to the request
 
-1. When authority is not specified, use XLSX, XLSM, or CSV as the quantitative authority; use SVG or an image as the visual target; use Python only as a design reference.
-2. Never invent, interpolate, silently repair, or relabel scientific values. Mark missing or ambiguous facts as `unverified`.
-3. Work on one figure at a time unless the user explicitly requests a batch.
-4. Keep source workbooks, SVGs, images, scripts, and existing OPJU files unchanged. Save outputs separately unless replacement is explicitly authorized.
+1. Use **audit mode** for read-only inspection.
+2. Use **create mode** for new data, formulas, or graph structure. Audit headers, units, order, blanks, and formula caches.
+3. Use **revise mode** for visual changes to an existing OPJU. Read only the current graph and affected objects; skip full-workbook audits unless data or structure changes.
 
-## Run the portable read-only preflight
+## Execute compactly in Origin
 
-1. Locate the exact inputs and intended output directory.
-2. Run `scripts/audit_origin_artifacts.py` with the relevant `--xlsx`, `--csv`, `--svg`, `--opju`, or `--reference` arguments. Keep default output environment-neutral: basenames, hashes, dimensions, counts, and geometry only; enable machine- or dataset-specific detail when the task requires it.
-3. Use `--include-preview`, `--include-formulas`, or `--full-paths` only when those details are necessary and permitted to appear in tool output.
-4. Treat `openpyxl` as an optional XLSX/XLSM-audit dependency. If it is absent, report that limitation; do not install or alter an environment without approval. CSV, SVG, OPJU, and reference audits must remain usable without it.
-5. Inspect headers, units, missing cells, category order, and formula semantics. If formula cells lack cached values, trace the upstream raw data and plan explicit derived columns in Origin instead of importing blanks or formula text as numbers.
-6. State the proposed data-to-plot mapping, chart geometry, and output filenames before mutation when the current approval policy requires it.
+1. Confirm the backend once per task with `origin_doctor`, `origin_ping`, and `origin_capabilities`; repeat only after failure. If tools are pending or unavailable, read `references/backend.md`.
+2. Prefer typed `origin_*` tools. Use narrow LabTalk only for an Origin-native gap that can be checked afterward.
+3. Bind every scientific series and data label to worksheet columns. Preserve blanks and rebuild uncached derived values from authoritative columns.
+4. Apply structure before styling. Submit small serial mutation batches and read back only changed state. Treat timeouts as unknown state and inspect before retrying.
+5. Request counts, roles, limits, changed properties, and representative values instead of full worksheets or redundant JSON.
 
-## Confirm the Origin backend
+## Verify proportionately
 
-1. Allow a pending Origin MCP server to finish initialization before deciding tools are absent.
-2. Require task-visible `origin_*` tools and call `origin_doctor`, `origin_ping`, and `origin_capabilities` before mutating Origin.
-3. If the tools or Bridge are unavailable, follow `references/backend.md`. Read `references/compatibility.md` only for version-specific failures.
-4. If the host discovers MCP tools only at task startup, open a new task after an approved repair. Do not replace Origin control with terminal-driven mouse or keyboard automation.
-5. Prefer typed Origin tools. Use `origin_run_labtalk` only for a narrow Origin-native gap that can be inspected and verified afterward.
+- For an intermediate visual revision, render a preview and perform delta QA on the changed properties and bindings.
+- At a stable OPJU handoff, save, reopen, and verify the expected worksheets, layers, plots, and bindings. Mark blocked checks as `unverified`.
+- When export is requested, inspect only the requested files for size, dimensions, parsing, clipping, overlap, and freshness relative to the OPJU.
+- Do not claim completion from a successful save, file hash, preview, or stale export alone.
 
-## Build or revise in Origin
+## Load details only when needed
 
-1. Open or create the project with Origin project tools.
-2. Import the authoritative table without changing the source. Preserve category order, units, long names, comments, and meaningful blank cells.
-3. When formula caches are missing, import upstream raw columns, rebuild derived columns with explicit Origin formulas or calculated-column tools, and verify representative rows.
-4. Assign X, Y, error, and label roles explicitly. For a structurally complex figure, inspect `origin_plan_figure_spec` before executing it.
-5. Choose the smallest Origin-native construction from `references/recipes.md`. Keep every scientific series and data label bound to worksheet data; never simulate data with drawing objects.
-6. Match structure before cosmetics: layers, grouping, stacking, axes, scales, ticks, labels, and legends precede colors, fonts, markers, and line widths.
-7. Save an editable `.opju` and export a vector `.svg`.
-
-## Verify before claiming completion
-
-1. Read back worksheet values, blanks, labels, and column designations.
-2. Inspect graph layers, plots, data bindings, axes, legends, and text objects with Origin graph information and diagnostic tools.
-3. Render the graph and inspect it at normal size and close zoom.
-4. Reopen the saved OPJU and re-query it. If reopening or binding verification is blocked, mark editability as `unverified`.
-5. Run `scripts/audit_origin_artifacts.py --require-outputs` on the OPJU and SVG, then apply `references/qa.md`.
-6. Report exact output paths only in the final delivery context, together with verified facts, limitations, and unresolved visual judgment.
-
-## Handle failures safely
-
-- Treat a timeout after a mutating call as an unknown state. Inspect task status, project contents, and output files before retrying.
-- Never blindly replay a non-idempotent import, plot, merge, save, or export operation.
-- Preserve partial artifacts for diagnosis unless replacement or deletion is authorized.
-- If the backend cannot be recovered safely, stop and report the exact failed check and shortest recovery step.
-
-## References
-
-- Read `references/backend.md` for discovery, connection, recovery, and tool selection.
-- Read `references/compatibility.md` only for known version or environment failures.
-- Read `references/recipes.md` when choosing an Origin-native chart structure.
-- Read `references/qa.md` before final acceptance.
+- Read `references/recipes.md` only when the native graph construction is uncertain.
+- Read `references/qa.md` only for stable handoff or final export acceptance.
+- Read `references/compatibility.md` only for a matching version or dependency failure.
+- Run `scripts/audit_origin_artifacts.py` for new or changed inputs and final artifact checks, not for routine style-only revisions.
