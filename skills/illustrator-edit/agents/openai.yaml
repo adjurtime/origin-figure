@@ -1,0 +1,4 @@
+interface:
+  display_name: "Illustrator Edit"
+  short_description: "安全精修、组合并核验 Illustrator 矢量图稿"
+  default_prompt: "Use $illustrator-edit to refine this existing SVG or PDF in Illustrator without changing its data content."
