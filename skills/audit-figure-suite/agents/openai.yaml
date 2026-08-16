@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Figure Suite"
+  short_description: "Audit multi-panel and cross-figure consistency"
+  default_prompt: "Use $audit-figure-suite to audit this paper's complete figure set and each multi-panel figure for scientific, visual, geometric, and Origin delivery consistency without editing source files."

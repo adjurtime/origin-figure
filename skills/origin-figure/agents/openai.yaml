@@ -1,4 +1,4 @@
 interface:
   display_name: "Origin Figure"
-  short_description: "Create concise, editable paper figures in Origin"
-  default_prompt: "Use $origin-figure to create or revise an editable, Word-sized paper figure in Origin and export only when I request it."
+  short_description: "Create or revise one editable Origin paper figure"
+  default_prompt: "Use $origin-figure to create or revise one editable paper figure in Origin using the approved suite style, save the OPJU first, and export only when I request it."

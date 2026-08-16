@@ -1,9 +1,9 @@
-# Origin Figure Skill
+# Origin Figure Skills
 
-A reusable Origin and OriginPro scientific-figure skill for Codex and compatible Agent Skills hosts.
+A pair of scientific-figure skills for Codex and compatible Agent Skills hosts: one edits a single Origin figure, and one audits a complete paper figure suite.
 
 
-## Included skill
+## Included skills
 
 ### `origin-figure`
 
@@ -20,11 +20,17 @@ The skill supports:
 - compact Origin-native structural, visual, and persistence verification
 - SVG or 600 dpi PNG export when requested
 
+### `audit-figure-suite`
+
+Audit a paper's complete figure set without changing source files. The workflow establishes a shared figure specification, checks scientific and visual consistency, records justified exceptions, and returns a severity-ranked revision plan for one-figure-at-a-time execution.
+
+The default visual baseline uses Times New Roman at final Word size, no minor ticks or gridlines, short outward major ticks, restrained semantic colours, consistent panels and labels, and Origin binding and persistence checks when OPJU files are available.
+
 ## Requirements
 
 - Windows
-- A licensed Origin or OriginPro installation
-- A working Origin MCP and Bridge configuration that exposes the required `origin_*` tools
+- A licensed Origin or OriginPro installation for `origin-figure` and OPJU semantic checks
+- A working Origin MCP and Bridge configuration that exposes the required `origin_*` tools for editable Origin work
 - Python 3.10 or newer to run the bundled audit script
 - Optional: `openpyxl` for XLSX or XLSM audits
 
@@ -34,16 +40,18 @@ This repository does not distribute Origin, OriginPro, the Origin Bridge, or an 
 
 ### Install with Codex
 
-Ask Codex to install the skill from:
+Ask Codex to install either skill from:
 
 ```text
 https://github.com/adjurtime/origin-figure/tree/main/skills/origin-figure
+https://github.com/adjurtime/origin-figure/tree/main/skills/audit-figure-suite
 ```
 
 For example:
 
 ```text
 $skill-installer install the origin-figure skill from https://github.com/adjurtime/origin-figure/tree/main/skills/origin-figure
+$skill-installer install the audit-figure-suite skill from https://github.com/adjurtime/origin-figure/tree/main/skills/audit-figure-suite
 ```
 
 ### Install manually
@@ -61,6 +69,8 @@ Invoke the skill explicitly:
 
 ```text
 Use $origin-figure to create or revise an editable, Word-sized paper figure in Origin and export only when I request it.
+
+Use $audit-figure-suite to audit this paper's complete figure set without editing the source files.
 ```
 
 Or describe an Origin plotting task naturally. The skill supports three operating modes:
@@ -94,6 +104,12 @@ The script imports `openpyxl` only when `--xlsx` is used. CSV, SVG, OPJU, and ge
 A successful file audit does not prove that an OPJU is editable or correctly bound. Formal completion requires reopening the project in Origin and querying its worksheet, graph objects, and data bindings through the Origin integration.
 
 ## Update log
+
+### 2026-08-16
+
+- Added a concise default style for single Origin figures: no minor ticks or gridlines, short outward major ticks, restrained semantic colours, and consistent final-size typography and layout.
+- Added `audit-figure-suite` for read-only, paper-wide scientific and visual consistency review.
+- Added a reusable suite specification template covering axes, typography, semantic encodings, layout, Origin persistence, delivery, and justified exceptions.
 
 ### 2026-08-11
 

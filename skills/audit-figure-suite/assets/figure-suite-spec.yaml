@@ -1,0 +1,96 @@
+version: 2
+
+project:
+  title: null
+  figures_in_scope: []
+  manuscript_version: null
+  journal_requirement_source: null
+
+authority:
+  user_rules: []
+  source_tables: []
+  analytical_outputs: []
+  visual_references: []
+
+physical_size:
+  word_or_journal_size_classes_mm: {}
+  final_size_check_required: true
+
+typography:
+  font_family: "Times New Roman"
+  base_size_pt: 10.5
+  role_sizes_pt: {}
+
+axes:
+  minor_ticks: "off"
+  major_ticks:
+    direction: "outward"
+    length: "short"
+  gridlines: "off"
+  frame: "project-defined"
+  number_format_rules: {}
+  comparable_scale_groups: []
+
+panel_system:
+  labels:
+    format: "(a)"
+    case: "lowercase"
+    sequence: "row-major"
+    parentheses: "half-width"
+    anchor: "plot-area top-left"
+    relative_offset: {}
+    typography: {}
+    caption_link_required: true
+  geometry:
+    equal_plot_rectangles_when_comparable: true
+    align_x_axis_baselines_by_row: true
+    align_y_axis_baselines_by_column: true
+    horizontal_gutter_mm: null
+    vertical_gutter_mm: null
+    outer_margins_mm: {}
+    measurement_tolerance_mm: null
+  shared_axes:
+    x_groups: []
+    y_groups: []
+    repeated_title_policy: "project-defined"
+  legends_and_colourbars:
+    shared_when_appropriate: true
+    placement_rules: {}
+    must_not_distort_single_panel: true
+
+visual_encoding:
+  palette: []
+  semantic_colours: {}
+  semantic_markers: {}
+  semantic_line_styles: {}
+  category_orders: {}
+  accessibility_checks:
+    colourblind: true
+    grayscale_when_required: true
+
+layout:
+  background: "white"
+  margin_and_gutter_rules: {}
+  decorative_effects: "off"
+
+labels_and_legends:
+  abbreviation_rules: {}
+  label_hierarchy: {}
+  legend_order_rules: {}
+  overlap_policy: "resolve without hiding important evidence"
+
+origin_delivery:
+  worksheet_bindings_required: true
+  preserve_original_opju: true
+  save_revision_separately: true
+  reopen_and_verify: true
+  export_only_when_requested: true
+  requested_formats: []
+
+figures: []
+
+exceptions: []
+
+audit_outputs:
+  figure_by_panel_matrix_required: true
+  cross_figure_matrix_required: true

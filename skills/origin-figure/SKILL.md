@@ -1,6 +1,6 @@
 ---
 name: origin-figure
-description: "Create, revise, audit, and save editable publication figures in Origin or OriginPro on Windows from tabular data, OPJU, SVG, and image references. Use for Origin画图, 论文配图, existing-OPJU revisions, Word-sized layouts, typography, labels, multi-panel figures, and requested vector or raster exports. Require Origin-native worksheet bindings and persistence verification; do not use another renderer for the final graph."
+description: "Create, revise, audit, and save one editable publication figure at a time in Origin or OriginPro on Windows from tabular data, OPJU, SVG, and image references. Use for Origin画图, 单张论文配图, existing-OPJU revisions, Word-sized layouts, axes, typography, labels, multi-panel figures, and requested vector or raster exports. Require Origin-native worksheet bindings and persistence verification; use audit-figure-suite for paper-wide consistency review."
 ---
 
 # Origin Figure
@@ -11,7 +11,8 @@ Make paper-ready Origin figures with authoritative data, worksheet bindings, and
 
 - Treat tabular inputs as quantitative authority and images as visual references. Never invent or silently repair scientific values.
 - For English paper figures, default to Times New Roman at 10.5 pt at the final physical size. Set the Origin page to the intended Word insertion size so later scaling does not change the effective font size. Explicit user, journal, or project requirements override these defaults.
-- Reuse an accepted project style for typography, axes, palette, legends, panel labels, and spacing.
+- Reuse an accepted project or figure-suite style for typography, axes, palette, legends, panel labels, and spacing. If none exists, read `references/style.md` before creating or broadly restyling a graph.
+- Default to no minor ticks or gridlines, short outward major ticks, and a restrained semantic palette. Keep only scientifically or explicitly justified exceptions.
 - Save an editable `.opju` when the graph is ready for review. Do not export by default. After user feedback, export only the requested formats; prefer SVG for vector delivery and use 600 dpi PNG when raster output is requested.
 - Protect source files and existing OPJU files. Preserve manual Origin edits and save revisions separately unless replacement is authorized.
 
@@ -39,6 +40,7 @@ Make paper-ready Origin figures with authoritative data, worksheet bindings, and
 ## Load details only when needed
 
 - Read `references/recipes.md` only when the native graph construction is uncertain.
+- Read `references/style.md` only for a new figure, broad restyling, or when no accepted project style exists.
 - Read `references/qa.md` only for stable handoff or final export acceptance.
 - Read `references/compatibility.md` only for a matching version or dependency failure.
 - Run `scripts/audit_origin_artifacts.py` for new or changed inputs and final artifact checks, not for routine style-only revisions.

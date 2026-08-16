@@ -31,7 +31,9 @@ Apply every relevant check. A plausible preview or successful file-level audit i
 
 - Final dimensions and aspect ratio match the target or stated journal requirement.
 - Typography, palette, line widths, markers, column widths, gaps, and transparency are consistent.
-- No clipping, overlap, unintended gridline, default placeholder, or excessive whitespace remains.
+- Major ticks are short and outward; minor ticks and gridlines are absent unless the approved style or scientific reading task requires them.
+- The same scientific meaning retains the same colour, marker, line style, terminology, and ordering across the figure or approved suite specification.
+- No clipping, unresolved overlap, unintended gridline, default placeholder, decorative effect, or excessive whitespace remains.
 - The figure is legible at final export size and in grayscale when required.
 
 ## Three evidence layers
