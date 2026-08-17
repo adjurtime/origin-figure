@@ -63,9 +63,16 @@ For a data-backed scientific figure, keep the `mse-figure` evidence gate and vis
 
 If the active path is missing, ambiguous, or points to the source, stop before writing.
 
+## Version Material Edits
+
+- Before a substantial crop, panel rearrangement, typography hierarchy change, or label-layout pass, copy the latest verified AI file to the next sequential name: `_v1.ai`, `_v2.ai`, `_v3.ai`, and so on.
+- Open and write only the new version. Never overwrite an earlier verified version during a material edit.
+- Give review previews the same version stem. Keep internal moderate-resolution QA previews distinct from final publication exports.
+- Record the parent version and the permitted edit contract before writing.
+
 ## Prefer the Quiet MCP
 
-Use the registered `illustrator-silent` server when available. Its launcher in [scripts/silent_server.py](scripts/silent_server.py) copies the cached upstream package to a temporary runtime. In that copy it removes explicit foreground-activation flags, raises ordinary/heavy JSX timeouts to 90/150 seconds by default, and adds character-range text styling to `modify_object`. It does not modify the installed package.
+Use the registered `illustrator-silent` server when available. Its launcher in [scripts/silent_server.py](scripts/silent_server.py) copies the cached upstream package to a temporary runtime. In that copy it removes explicit foreground-activation flags, raises ordinary/heavy JSX timeouts to 90/240 seconds by default, routes native open/save/close through the heavy timeout, normalizes artboard coordinates, adds character-range text styling to `modify_object`, and registers `batch_modify_text`. It does not modify the installed package.
 
 Check the existing setup before installing anything:
 
@@ -74,22 +81,33 @@ python3 scripts/silent_server.py --probe
 codex mcp get illustrator-silent
 ```
 
-Require the probe to report `runtime_activation_flags_remaining: 0`, the intended timeout values, and `character_runs_enabled: true`. Override the defaults only when justified:
+Require the probe to report all of the following before editing:
+
+- `runtime_activation_flags_remaining: 0`;
+- the intended ordinary and heavy timeout values;
+- `character_runs_enabled: true`;
+- `safe_artboard_coordinates_enabled: true`;
+- `batch_modify_text_enabled: true`;
+- `open_uses_heavy_timeout`, `save_uses_heavy_timeout`, and `close_uses_heavy_timeout` as `true`.
+
+Override the defaults only when justified:
 
 ```bash
-python3 scripts/silent_server.py --probe --normal-timeout-ms 120000 --heavy-timeout-ms 240000
+python3 scripts/silent_server.py --probe --normal-timeout-ms 120000 --heavy-timeout-ms 300000
 ```
 
 Do not install or upgrade Node, Python, npm packages, Illustrator, or other dependencies during an ordinary edit without approval. Use one MCP server process per task.
 
+The launcher and registered tool set are not hot-reloaded. After changing this skill or wrapper, start a fresh MCP process before claiming that the new behavior is active.
+
 When raw stdio diagnosis is unavoidable, use newline-delimited JSON-RPC. Do not use `Content-Length` framing or repeatedly start `npx` processes.
 
-## Run One Batched Edit Cycle
+## Run One Controlled Edit Cycle
 
 1. Open the approved working copy once.
-2. Inspect path, artboards, layers, groups, text frames, fonts, and target UUIDs.
+2. Inspect path, artboards, layers, groups, text frames, fonts, and target UUIDs. Pass `coordinate_system` explicitly for every coordinate-bearing read or write.
 3. Export a clean baseline PNG.
-4. Apply the smallest coherent edit batch to the frozen target set.
+4. Apply the smallest coherent edit batch to the frozen target set. Use `batch_modify_text` for two or more text frames; use `modify_object` for a single frame or non-text object.
 5. Export a moderate-resolution modified PNG and inspect the actual image.
 6. Compare baseline and modified previews; require differences to be localized to permitted regions.
 7. Save the AI working copy once, close it, reopen it, and export again.
@@ -97,6 +115,19 @@ When raw stdio diagnosis is unavoidable, use newline-delimited JSON-RPC. Do not 
 9. Close without saving and verify the source hash.
 
 Do not rely on `undo` as recovery. Close without saving and reopen the last verified AI working copy.
+
+For `batch_modify_text`, inspect every returned item. If only some UUIDs fail, re-query those objects and retry only the failed subset; never replay a partially successful full batch blindly.
+
+## Resize Artboards Without Guessing
+
+The quiet runtime gives `manage_artboards` the same top-left rectangle contract used by `get_artboards`:
+
+- `document`: `x` and `y` are the native Illustrator coordinates of the requested top-left corner; width extends right and height extends down;
+- `artboard-web`: `x` and `y` are offsets right and down from the target artboard's current top-left corner.
+
+Always call `get_artboards` with an explicit coordinate system, then call `manage_artboards` with that same coordinate system. Do not pass `rawPosition.y` into a document-coordinate resize formula. After resizing, require the verified position and size to equal the intended rectangle and export a fresh preview before moving artwork or saving.
+
+The upstream 1.6.2 `manage_artboards` interface uses a different Y-origin convention. Do not bypass the quiet wrapper for artboard edits unless the conversion has been independently checked.
 
 ## Handle Imported Objects Carefully
 
@@ -139,9 +170,9 @@ Calculate the actual character indices from the final string; never copy example
 
 The quiet server can keep open, read, modify, and PNG export operations in the background. Illustrator may still surface itself during native save or close. Batch those operations once.
 
-The upstream server's 30/60-second JSX limits are too short for some deeply nested scientific SVGs. The quiet wrapper uses 90/150 seconds by default. Do not increase client timeouts while leaving shorter server timeouts unchanged.
+The upstream server's 30/60-second JSX limits are too short for some deeply nested scientific figures. The quiet wrapper uses 90/240 seconds by default and routes open/save/close through the heavy channel. Do not increase client timeouts while leaving shorter server timeouts unchanged.
 
-If a tool times out after a visible action may already have occurred, do not repeat it. Start a fresh session, inspect `get_document_info`, object state, and expected output files, then continue from the observed state. If `open_document` times out from Illustrator's home screen, verify the UI and use an approved app-opening fallback only when needed; confirm the exact active path before any save.
+If a tool times out after a visible action may already have occurred, do not repeat it. First inspect `get_document_info`; for a save, also compare the expected file's path, size, modification time, and hash, then reopen and render the candidate if the disk file changed. Retry only when the active path is verified and the expected disk file remained unchanged. If `open_document` times out from Illustrator's home screen, verify the UI and use an approved app-opening fallback only when needed; confirm the exact active path before any save.
 
 `close_document(save=false)` can time out after the document has already closed. Re-probe with `get_document_info` before retrying; never close an unverified active document.
 
@@ -152,6 +183,7 @@ Read [references/known-limitations.md](references/known-limitations.md) when dia
 Report:
 
 - source and working-copy paths;
+- parent and resulting version names for every material edit;
 - permitted changes actually applied;
 - source hash before and after;
 - active-path verification before save;
