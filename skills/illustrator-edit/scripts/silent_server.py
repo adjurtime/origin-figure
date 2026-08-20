@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 PACKAGE_NAME = "illustrator-mcp-server"
-WRAPPER_PATCH_VERSION = 4
+WRAPPER_PATCH_VERSION = 5
 DEFAULT_NORMAL_TIMEOUT_MS = 90_000
 DEFAULT_HEAVY_TIMEOUT_MS = 240_000
 
@@ -329,6 +329,80 @@ def patch_timeouts(package_dir: Path, normal_ms: int, heavy_ms: int) -> None:
     runner.write_text(text, encoding="utf-8")
 
 
+def patch_applescript_timeout(package_dir: Path) -> None:
+    """Keep AppleEvent timeout longer than the matching Node process timeout."""
+    transport = package_dir / "dist" / "executor" / "file-transport.js"
+    text = transport.read_text(encoding="utf-8")
+    if "illustrator-edit: appleevent-timeout" not in text:
+        option_anchor = "    const activateLine = options?.activate ? '\\n  activate' : '';\n"
+        option_replacement = option_anchor + (
+            "    // illustrator-edit: appleevent-timeout\n"
+            "    const timeoutSeconds = Math.max(1, Math.ceil((options?.timeoutMs ?? 60000) / 1000) + 30);\n"
+        )
+        default_anchor = '''        script = [
+            `tell application "Adobe Illustrator"${activateLine}`,
+            jsxLine,
+            'end tell',
+        ].join('\\n');
+'''
+        default_replacement = '''        script = [
+            `with timeout of ${timeoutSeconds} seconds`,
+            `tell application "Adobe Illustrator"${activateLine}`,
+            jsxLine,
+            'end tell',
+            'end timeout',
+        ].join('\\n');
+'''
+        app_anchor = '''        script = [
+            `tell application "${appPathEscaped}"${activateLine}`,
+            jsxLine,
+            'end tell',
+        ].join('\\n');
+'''
+        app_replacement = '''        script = [
+            `with timeout of ${timeoutSeconds} seconds`,
+            `tell application "${appPathEscaped}"${activateLine}`,
+            jsxLine,
+            'end tell',
+            'end timeout',
+        ].join('\\n');
+'''
+        replacements = (
+            (option_anchor, option_replacement),
+            (default_anchor, default_replacement),
+            (app_anchor, app_replacement),
+        )
+        for anchor, replacement in replacements:
+            if text.count(anchor) != 1:
+                raise SystemExit(
+                    "Could not patch the AppleEvent timeout safely; the upstream "
+                    f"layout changed. Inspect {transport} before continuing."
+                )
+            text = text.replace(anchor, replacement, 1)
+        transport.write_text(text, encoding="utf-8")
+
+    runner = package_dir / "dist" / "executor" / "jsx-runner.js"
+    runner_text = runner.read_text(encoding="utf-8")
+    if "timeoutMs: timeout" not in runner_text:
+        call_anchor = (
+            "await writeAppleScript(files.runnerPath, files.scriptPath, "
+            "{ activate, appPath: getAppPath() });"
+        )
+        call_replacement = (
+            "await writeAppleScript(files.runnerPath, files.scriptPath, "
+            "{ activate, appPath: getAppPath(), timeoutMs: timeout });"
+        )
+        if runner_text.count(call_anchor) != 1:
+            raise SystemExit(
+                "Could not pass the process timeout to AppleScript safely; inspect "
+                f"{runner} before continuing."
+            )
+        runner.write_text(
+            runner_text.replace(call_anchor, call_replacement, 1),
+            encoding="utf-8",
+        )
+
+
 def patch_character_runs(package_dir: Path) -> None:
     modifier = package_dir / "dist" / "tools" / "modify" / "modify-object.js"
     text = modifier.read_text(encoding="utf-8")
@@ -518,6 +592,9 @@ def inspect_runtime(package_dir: Path) -> dict:
     registry_text = (
         package_dir / "dist" / "tools" / "registry.js"
     ).read_text(encoding="utf-8")
+    transport_text = (
+        package_dir / "dist" / "executor" / "file-transport.js"
+    ).read_text(encoding="utf-8")
     document_ops = {}
     for operation in ("open", "save", "close"):
         operation_text = (
@@ -550,6 +627,10 @@ def inspect_runtime(package_dir: Path) -> dict:
                 / "modify"
                 / "batch-modify-text.js"
             ).is_file()
+        ),
+        "applescript_timeout_enabled": (
+            "illustrator-edit: appleevent-timeout" in transport_text
+            and "timeoutMs: timeout" in runner_text
         ),
         **document_ops,
     }
@@ -605,6 +686,7 @@ def prepare_runtime(
             if patched != text:
                 javascript.write_text(patched, encoding="utf-8")
         patch_timeouts(runtime_package, normal_timeout_ms, heavy_timeout_ms)
+        patch_applescript_timeout(runtime_package)
         patch_character_runs(runtime_package)
         patch_native_document_ops(runtime_package)
         patch_artboard_coordinates(runtime_package)
@@ -624,6 +706,7 @@ def prepare_runtime(
         "character_runs_enabled": True,
         "safe_artboard_coordinates_enabled": True,
         "batch_modify_text_enabled": True,
+        "applescript_timeout_enabled": True,
         "open_uses_heavy_timeout": True,
         "save_uses_heavy_timeout": True,
         "close_uses_heavy_timeout": True,

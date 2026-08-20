@@ -14,7 +14,7 @@ The quiet wrapper also patches ordinary/heavy JSX timeouts, native document oper
 
 ## Operation timeouts
 
-Upstream 1.6.2 uses 30 seconds for ordinary JSX and 60 seconds for heavy calls. Deeply nested imported figures can exceed those limits during open, object indexing, save, or post-operation verification. The quiet wrapper defaults to 90/240 seconds, routes open/save/close through the heavy channel, and reports each patch through `--probe`.
+Upstream 1.6.2 uses 30 seconds for ordinary JSX and 60 seconds for heavy calls. macOS AppleScript also applies an independent AppleEvent timeout, which can raise `-1712` before a longer Node timeout expires. Deeply nested imported figures can exceed those limits during open, object indexing, save, or post-operation verification. The quiet wrapper defaults to 90/240 seconds, routes open/save/close through the heavy channel, keeps the AppleEvent timeout 30 seconds longer than the matching process timeout, and reports each patch through `--probe`.
 
 A terminated AppleScript is ambiguous: the requested action may have completed before the response was killed. Do not retry a write from the error alone. Re-query the document path and object state. For save, compare the expected file path, size, modification time, and hash; reopen and render the changed candidate before deciding whether a retry is needed.
 
